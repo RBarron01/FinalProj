@@ -15,8 +15,8 @@ def path(energy,m,q):
     velocX = velocSol(3.5,energy)*np.cos(.01) # m/s
     velocY = velocSol(3.5,energy)*np.sin(.01)
     velocArr = np.array([velocX,velocY,0]) # m/s
-    posX = random.random()*.01
-    posY = random.random()*.01
+    posX = random.random()*.000001
+    posY = random.random()*.000001
     pos = np.array([posX,posY,0]) # m
     time = np.arange(0,.000000002,10**-10) # s
     magField = np.array([0,0,3.8]) # T
