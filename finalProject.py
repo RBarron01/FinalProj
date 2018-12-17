@@ -117,6 +117,14 @@ data = pd.read_fwf('particles.txt')
 # read data to text file 
  
    
+y_pos = np.arange(len(names))
+plt.bar(y_pos, partCount, align='center', alpha=0.5)
+plt.xticks(y_pos, names)
+plt.ylabel('Number of Particles')
+plt.title('What Particles Came Out of Collision')
+plt.show()
+
+
 '''
 Next steps:
     calculate probabilities from threshold energies
