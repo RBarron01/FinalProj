@@ -9,14 +9,14 @@ import matplotlib.pyplot as plt
 from scipy.integrate import quad
 from scipy.optimize import bisect
 import pandas as pd
+import partTxtGen #creates txt file
+from astropy.table import Table, Column
+import random
+from scipy.integrate import odeint
+from velocFunc import velocSol
+from partPath import path
 
-partCount = [np.array([0.0] for i in range(len(deciProbs)))]
-for i in randNums:
-    for j in range(len(deciProbs)):       
-        if i>=sum(deciProbs[0:j]) and i<=sum(deciProbs[0:j+1]):
-            partCount[j]+=1
-        elif i<deciProbs[0]:
-            partCount[0]+=1
+out = velocSol(3.5,.511)
 
 # constants from article c71092
 bendRad = 100 # m
@@ -24,6 +24,8 @@ beamPow = 5.3 #pv megaWatts
 circum = 400*(np.pi + 1) # circumference of collider
 deltV0 = .025 # experimental and theoretical constant
 entEn = 15000 # MeV kinetic energy of e+- when it enters the collider
+bField = [0,0,3.8] # T
+
 
 lght = 2.99e8 # m/s
 elResEn = .511 #MeV
@@ -50,16 +52,7 @@ kEn = entEn - elResEn*lght**2 # MeV
 
 # solve for velocity of the particles
 entEnBeam = entEn/2
-veloc = np.arange(2.22e5,2.3e5,1) # range narrowed through experimentation
-def func(veloc):    
-    return np.sqrt(entEnBeam/((1/np.sqrt(1-veloc**2/lght**2))-1)/elResEn) - veloc
-
-funcOut = np.array([func(veloc[i]) for i in range(len(veloc))])
-plt.plot(veloc,funcOut)
-plt.xlabel('Velocity candidates (m/s)')
-plt.ylabel('Function to determine velocity')
-solVeloc = bisect(func,226335,226336,maxiter = 10000)
-
+solVeloc = velocSol(entEnBeam,elResEn)
 
 
 # calculate momentum
@@ -70,7 +63,7 @@ momElX = momPartMag*np.cos(incRad)
 momElY = momPartMag*np.sin(incRad)
 
 momPosX = momPartMag*np.cos(-incRad)
-momPosY = momPartMag*np.sin(incRad)
+momPosY = momPartMag*np.sin(-incRad)
 
 # calculate the probabilities from threshold energies
 # Particle threshold energy
@@ -83,7 +76,10 @@ partList.append(['muonNeg',105.6])
 partList.append(['tauNeg', 1777])
 partList.append(['proton',938.3])
 partList.append(['neutron',939.6])
-partList.append(['delta',1232]) # have 4 deltas so totally random choice between those 4
+partList.append(['delta2Pos',1232]) # have 4 deltas so totally random choice between those 4
+partList.append(['deltaPos',1232])
+partList.append(['deltaNeut',1232])
+partList.append(['deltaNeg',1232])
 partList.append(['lambda0',1115.7]) # careful, lambda is a keyword
 partList.append(['sigmaPos', 1189.4])
 partList.append(['sigmaNeut',1192.5])
@@ -95,9 +91,12 @@ partList.append(['omegaNeg',1672])
 partList.append(['pionChar',139.6])# has antiparticle so will produce +- at the same time
 partList.append(['pionNeut',135])
 partList.append(['kaonChar',493.7]) # + with - antiparticle
-partList.append(['kaonNeut',497.7]) 
+partList.append(['kaonNeut',497.7]) # has anti-neutral pair
 partList.append(['eta',547.8])
 partList.append(['etaPrime',957.6])
+
+echar = -1.602e-19
+charges = [echar,echar,echar,-echar,0,-2*echar,-echar,0,echar,0,-echar,0,echar,0,echar,echar,-echar,0,-echar,0,0,0]
 
 partArray = np.array([0.0]*2 for i in range(len(partList)))
 for i in range(len(partList)):
@@ -109,22 +108,59 @@ someasdf = [names,energies]
 totEnProbs = sum(energies)
 deciProbs = []
 
-[deciProbs.append(totEnProbs-i) for i in energies]
-deciProbs = sorted(deciProbs)
+[deciProbs.append((totEnProbs-i)/totEnProbs) for i in energies]
 
+deciProbs = [np.round(i) for i in deciProbs]
+deciProbsTot = sum(deciProbs)
 
-data = pd.read_fwf('particles.txt')
-# read data to text file 
- 
-   
+totParts = 100
+
+postii = 0
+munegee=0
+taunegg=0
+randNums = [np.array(random.randint(0,deciProbsTot)) for i in range(totParts)]
+partCount = np.array([0.0]*len(deciProbs))
+for i in randNums:
+    for j in range(len(deciProbs)):       
+        if i>=sum(deciProbs[0:j]) and i<=sum(deciProbs[0:j+1]):
+            partCount[j]+=1
+            break
+        elif i<deciProbs[0]:
+            partCount[0]+=1
+            print(i)
+            
+count = 0
+time = np.linspace(0,1e8,100)
+for i in range(len(partCount)):
+    
+    if charges[i] == 0:
+        xMom1 = -momElX
+        yMom1 = -momElY
+        xMom2 = -momPosX
+        yMom2 = -momPosY
+        count+=1
+    else:
+        vPart = velocSol(entEnBeam,energies[i]) # mass in rest energy units
+        veloc_pos = np.array([vPart*np.cos(incRad),vPart*np.sin(incRad),0,0,0,0]) # initial conditions
+        solution = path(energies[i],np.abs(energies[i]),charges[i])
+       
+        # plot x and y position 
+        plt.figure()
+        plt.plot(solution[:,3],solution[:,4])
+        plt.xlabel('x',color = 'b')
+        plt.ylabel('y',color = 'b')
+        plt.title('Position of an $ \\alpha $ particle')
+        
+        
+# bar graph
+plt.figure()
 y_pos = np.arange(len(names))
 plt.bar(y_pos, partCount, align='center', alpha=0.5)
 plt.xticks(y_pos, names)
 plt.ylabel('Number of Particles')
 plt.title('What Particles Came Out of Collision')
 plt.show()
-
-
+   
 '''
 Next steps:
     calculate probabilities from threshold energies
