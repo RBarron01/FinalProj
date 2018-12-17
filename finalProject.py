@@ -131,6 +131,7 @@ for i in randNums:
             
 count = 0
 time = np.linspace(0,1e8,100)
+plt.figure()
 for i in range(len(partCount)):
     
     if charges[i] == 0:
@@ -145,7 +146,7 @@ for i in range(len(partCount)):
         solution = path(energies[i],np.abs(energies[i]),charges[i])
        
         # plot x and y position 
-        plt.figure()
+       # plt.figure()
         plt.plot(solution[:,3],solution[:,4])
         plt.xlabel('x',color = 'b')
         plt.ylabel('y',color = 'b')
