@@ -157,17 +157,18 @@ for i in range(len(partCount)):
 plt.figure()
 y_pos = np.arange(len(names))
 plt.bar(y_pos, partCount, align='center', alpha=0.5)
-plt.xticks(y_pos, names)
+plt.xticks(y_pos, names, rotation = 80)
 plt.ylabel('Number of Particles')
 plt.title('What Particles Came Out of Collision')
 plt.show()
    
 '''
 Next steps:
-    calculate probabilities from threshold energies
-        to follow up, does a particle take more from the e+ or e-?
-    calculate path of paticles from magnetic field 
-        Includes charge on respective particles
+    antiparticles
+    neutral particles
+    incident beam
+    legend
+    match color to particle
 
 
 
