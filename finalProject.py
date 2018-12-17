@@ -10,6 +10,13 @@ from scipy.integrate import quad
 from scipy.optimize import bisect
 import pandas as pd
 
+partCount = [np.array([0.0] for i in range(len(deciProbs)))]
+for i in randNums:
+    for j in range(len(deciProbs)):       
+        if i>=sum(deciProbs[0:j]) and i<=sum(deciProbs[0:j+1]):
+            partCount[j]+=1
+        elif i<deciProbs[0]:
+            partCount[0]+=1
 
 # constants from article c71092
 bendRad = 100 # m
