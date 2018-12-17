@@ -15,8 +15,9 @@ import random
 from scipy.integrate import odeint
 from velocFunc import velocSol
 from partPath import path
+from uncharPartPath import path0
 
-out = velocSol(3.5,.511)
+
 
 # constants from article c71092
 bendRad = 100 # m
@@ -103,7 +104,8 @@ for i in range(len(partList)):
     partSub = partList[i]
     names.append(partSub[0])
     energies.append(partSub[1])
-someasdf = [names,energies]
+antinames = []
+[antinames.append('anti-'+i) for i in names]
     
 totEnProbs = sum(energies)
 deciProbs = []
@@ -127,11 +129,11 @@ for i in randNums:
             break
         elif i<deciProbs[0]:
             partCount[0]+=1
-            print(i)
             
 count = 0
 time = np.linspace(0,1e8,100)
 plt.figure()
+
 for i in range(len(partCount)):
     
     if charges[i] == 0:
@@ -139,20 +141,27 @@ for i in range(len(partCount)):
         yMom1 = -momElY
         xMom2 = -momPosX
         yMom2 = -momPosY
-        count+=1
+        velocNeut = velocSol(entEnBeam,energies[i])
+        posNeutTot = path0(velocNeut,incRad) 
+        antiposNeut = posNeutTot[0]
+        posNeut = posNeutTot[1]
+        plt.plot(posNeut[0],posNeut[1], label = names[i])
+        plt.plot(antiposNeut[0],antiposNeut[1], label = antinames[i])
+        
     else:
-        vPart = velocSol(entEnBeam,energies[i]) # mass in rest energy units
-        veloc_pos = np.array([vPart*np.cos(incRad),vPart*np.sin(incRad),0,0,0,0]) # initial conditions
-        solution = path(energies[i],np.abs(energies[i]),charges[i])
-       
-        # plot x and y position 
-       # plt.figure()
-        plt.plot(solution[:,3],solution[:,4])
-        plt.xlabel('x',color = 'b')
-        plt.ylabel('y',color = 'b')
-        plt.title('Position of an $ \\alpha $ particle')
         
+        vPart = -velocSol(entEnBeam,energies[i]) # mass in rest energy units
+        solutionTot = path(energies[i],np.abs(energies[i]),charges[i])
+        solution = solutionTot[0]
+        antisolution = solutionTot[1]
+        plt.plot(solution[:,3],solution[:,4], label = names[i])
+        plt.plot(antisolution[:,3],antisolution[:,4], label = antinames[i])
+
         
+plt.xlabel('x',color = 'b')
+plt.ylabel('y',color = 'b')
+plt.title('Position of particles from collisions') 
+#plt.legend()       
 # bar graph
 plt.figure()
 y_pos = np.arange(len(names))
@@ -162,50 +171,3 @@ plt.ylabel('Number of Particles')
 plt.title('What Particles Came Out of Collision')
 plt.show()
    
-'''
-Next steps:
-    antiparticles
-    neutral particles
-    incident beam
-    legend
-    match color to particle
-
-
-
-
-
-buNum = 6 # number of bunches @Fermilab tevatron number of bunches in 1 dir
-bunLen = .06 # m (can range from a few to 50 cm)
-sigX = .1 # cm gaussian rms radii wrt x: for now assume all radii to be equal
-sigY = .01 # cm gaussian rms radii wrt y
-
-
-lght = 2.99e10 # m/s
-
-#ken = .5*m*omega**2
-enPart = 2#/6.242e9 # GeV
-
-#potEn = 88e3*enPart**4/(lght**2*bendRad)
-enLoss = (88/lght**2)
-freq = 10**6 # sec^-1 rev freq
-iBun = 10**-3 # mA/bunch at 2GeV
-
-massPart = 9.11e-31
-gammaPart = enPart/massPart # we think gamma = c^2 = E/mass_e-
-
-radPart = 2.82e-13 # m radius of particles (electron and positron)
- 
-betaX = np.linspace(.1,1,100) # amplitude functions at interaction point
-
-crossA = 4*np.pi*sigX*sigY
-# Think that these vals are wrong... check interp of nums
-nElMax = gammaPart*2*np.pi*sigX*(sigX + sigY) * .06/(radPart*betaX)
-nPosMax = gammaPart*2*np.pi*sigX*(sigX + sigY) * .06/(radPart*betaX)
-
-eChar = 1.6027e-19 # Coulombs
-k = 1/(4*np.pi*eChar**2)
-
-lum = .5e32 # cm^-2*s^-1#nElMax*nPosMax*buNum*freq/(4*np.pi*sigX*sigY)
-evRat = lum*crossA # event rate N
-
-iDens = nPosMax*freq*buNum'''

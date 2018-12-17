@@ -22,6 +22,7 @@ def path(energy,m,q):
     magField = np.array([0,0,3.8]) # T
     m = m*1.79e-30
     veloc_pos = np.array([velocArr[0],velocArr[1],velocArr[2],pos[0],pos[1],pos[2]]) # initial conditions
+    veloc_antipos = np.array([-velocArr[0],-velocArr[1],-velocArr[2],pos[0],pos[1],pos[2]]) # initial conditions
     
     def dpvdt (veloc_pos,time,m,q,magfield): # veloc_pos = vx,vy,vz,x,y,z
         # calculate cross product
@@ -40,4 +41,5 @@ def path(energy,m,q):
         return [dvxdt,dvydt,dvzdt,dxdt,dydt,dzdt]
     
     solution = odeint(dpvdt,veloc_pos,time,args = (m,q,magField),mxstep = 50000000)
-    return solution
+    solution2 = odeint(dpvdt,veloc_antipos,time,args = (m,-q,magField),mxstep = 50000000)
+    return [solution,solution2]
