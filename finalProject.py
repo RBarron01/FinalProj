@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Dec 12 12:13:26 2018
-@author: rachelbarron
+@author: Rachel Barron and Jodie McLennan
 """
+#import the modules
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import quad
@@ -13,6 +14,8 @@ import partTxtGen #creates txt file
 from astropy.table import Table, Column
 import random
 from scipy.integrate import odeint
+
+#functions we created
 from velocFunc import velocSol
 from partPath import path
 from uncharPartPath import path0
