@@ -3,9 +3,9 @@
 """
 Created on Mon Dec 17 17:08:04 2018
 
-@author: rachelbarron
+@author: Jodie McLennan and Rachel Barron
 """
-
+# to read in particle data
 import partTxtGen
 
 def readFile():
