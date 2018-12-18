@@ -1,0 +1,23 @@
+Name    Energy (MeV)    Charge (eV) 
+electron    0.511000    -1
+muonNeg    105.600000    -1
+tauNeg    1777.000000    -1
+proton    938.300000    1
+neutron    939.600000    0
+delta2Pos    1232.000000    2
+deltaPos    1232.000000    1
+deltaNeut    1232.000000    0
+deltaNeg    1232.000000    -1
+lambda0    1115.700000    0
+sigmaPos    1189.400000    1
+sigmaNeut    1192.500000    0
+sigmaNeg    1197.400000    -1
+xiNeut    1315.000000    0
+xiNeg    1321.000000    -1
+omegaNeg    1672.000000    -1
+pionChar    139.600000    1
+pionNeut    135.000000    0
+kaonChar    493.700000    1
+kaonNeut    497.700000    0
+eta    547.800000    0
+etaPrime    957.600000    0
