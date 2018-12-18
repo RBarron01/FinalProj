@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Dec 12 12:13:26 2018
-@author: rachelbarron
+@author: Jodie McLennan and Rachel Barron
 """
 import numpy as np
 import matplotlib.pyplot as plt
