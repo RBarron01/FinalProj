@@ -3,7 +3,7 @@
 """
 Created on Mon Dec 17 08:15:49 2018
 
-@author: rachelbarron
+@author: Jodie McLennan and Rachel Barron
 """
 # Just to create a txt file to read in data from
 import numpy as np
