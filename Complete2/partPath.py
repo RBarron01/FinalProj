@@ -3,7 +3,7 @@
 """
 Created on Mon Dec 17 12:23:04 2018
 
-@author: rachelbarron
+@author: Jodie McLennan and Rachel Barron
 """
 import numpy as np
 from scipy.integrate import odeint
